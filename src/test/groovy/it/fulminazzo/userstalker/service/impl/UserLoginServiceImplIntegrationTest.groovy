@@ -79,6 +79,11 @@ class UserLoginServiceImplIntegrationTest extends Specification {
                 new UserLoginCountDto(FIRST_USER2.username, 2),
                 new UserLoginCountDto(FIRST_USER3.username, 1)
         ]
+        4    || [
+                new UserLoginCountDto(FIRST_USER1.username, 3),
+                new UserLoginCountDto(FIRST_USER2.username, 2),
+                new UserLoginCountDto(FIRST_USER3.username, 1)
+        ]
     }
 
     def 'test getTopMonthlyUserLogins returns ordered list with size #size'() {
@@ -120,6 +125,7 @@ class UserLoginServiceImplIntegrationTest extends Specification {
         1    || [FIRST_USER3]
         2    || [FIRST_USER3, THIRD_USER1]
         3    || [FIRST_USER3, THIRD_USER1, SECOND_USER2]
+        7    || [FIRST_USER3, THIRD_USER1, SECOND_USER2, SECOND_USER1, FIRST_USER2, FIRST_USER1]
     }
 
     def 'test getUsernames returns all distinct usernames'() {

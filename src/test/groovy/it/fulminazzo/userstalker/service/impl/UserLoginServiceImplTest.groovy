@@ -56,6 +56,8 @@ class UserLoginServiceImplTest extends Specification {
         1     || [new UserLoginCountDto(FIRST_USER1.username, 2)]
         2     || [new UserLoginCountDto(FIRST_USER1.username, 2),
                   new UserLoginCountDto(FIRST_USER2.username, 1)]
+        3     || [new UserLoginCountDto(FIRST_USER1.username, 2),
+                  new UserLoginCountDto(FIRST_USER2.username, 1)]
     }
 
     def 'test getTopUserLogins with negative size throws'() {
@@ -82,6 +84,8 @@ class UserLoginServiceImplTest extends Specification {
         1     || [new UserLoginCountDto(FIRST_USER1.username, 2)]
         2     || [new UserLoginCountDto(FIRST_USER1.username, 2),
                   new UserLoginCountDto(FIRST_USER2.username, 1)]
+        3     || [new UserLoginCountDto(FIRST_USER1.username, 2),
+                  new UserLoginCountDto(FIRST_USER2.username, 1)]
     }
 
     def 'test getTopMonthlyUserLogins with negative size throws'() {
@@ -106,6 +110,7 @@ class UserLoginServiceImplTest extends Specification {
         0     || [FIRST_USER2, FIRST_USER1]
         1     || [FIRST_USER2]
         2     || [FIRST_USER2, FIRST_USER1]
+        3     || [FIRST_USER2, FIRST_USER1]
     }
 
     def 'test getNewestUserLogins with negative size throws'() {
@@ -134,7 +139,7 @@ class UserLoginServiceImplTest extends Specification {
         logins == expected.collect { mapper.entityToDto(it) }
 
         where:
-        username                              || expected
+        username             || expected
         FIRST_USER1.username || [FIRST_USER1]
         FIRST_USER2.username || [FIRST_USER2]
     }
