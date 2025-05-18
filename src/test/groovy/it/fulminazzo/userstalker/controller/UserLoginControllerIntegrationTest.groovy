@@ -159,19 +159,33 @@ class UserLoginControllerIntegrationTest extends Specification {
     }
 
     def 'test getNewestUserLogins returns ordered list with size #size'() {
-//        when:
-//        def logins = service.getNewestUserLogins(size)
-//
-//        then:
-//        logins == expected.collect { mapper.entityToDto(it) }
-//
-//        where:
-//        size || expected
-//        0    || [FIRST_USER3, THIRD_USER1, SECOND_USER2, SECOND_USER1, FIRST_USER2, FIRST_USER1]
-//        1    || [FIRST_USER3]
-//        2    || [FIRST_USER3, THIRD_USER1]
-//        3    || [FIRST_USER3, THIRD_USER1, SECOND_USER2]
-//        7    || [FIRST_USER3, THIRD_USER1, SECOND_USER2, SECOND_USER1, FIRST_USER2, FIRST_USER1]
+        given:
+        def expectedJson = jsonMapper.writeValueAsString(expected
+                .collect { userLoginMapper.entityToDto(it) }
+        )
+
+        and:
+        def url = '/api/v1/userlogins/newest'
+        if (size > 0) url += "?count=${size}"
+
+        when:
+        def response = mockMvc.perform(
+                MockMvcUtils.authenticate(MockMvcRequestBuilders.get(url))
+        )
+
+        then:
+        response.andExpectAll(
+                MockMvcResultMatchers.status().isOk(),
+                MockMvcResultMatchers.content().json(expectedJson)
+        )
+
+        where:
+        size || expected
+        0    || [FIRST_USER3, THIRD_USER1, SECOND_USER2, SECOND_USER1, FIRST_USER2, FIRST_USER1]
+        1    || [FIRST_USER3]
+        2    || [FIRST_USER3, THIRD_USER1]
+        3    || [FIRST_USER3, THIRD_USER1, SECOND_USER2]
+        7    || [FIRST_USER3, THIRD_USER1, SECOND_USER2, SECOND_USER1, FIRST_USER2, FIRST_USER1]
     }
 
     def 'test getUsernames returns all usernames'() {
