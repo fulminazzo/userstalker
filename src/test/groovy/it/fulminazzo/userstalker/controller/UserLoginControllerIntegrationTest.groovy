@@ -55,7 +55,7 @@ class UserLoginControllerIntegrationTest extends Specification {
 
         when:
         def response = mockMvc.perform(
-                MockMvcUtils.authenticate(MockMvcRequestBuilders.post('/v1/api/userlogins')
+                MockMvcUtils.authenticate(MockMvcRequestBuilders.post('/api/v1/userlogins')
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
         )

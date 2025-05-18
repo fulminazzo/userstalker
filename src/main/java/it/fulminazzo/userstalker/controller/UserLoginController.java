@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * The controller responsible for the endpoint: <code>/v1/api/userlogins</code>
+ * The controller responsible for the endpoint: <code>/api/v1/userlogins</code>
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/v1/api/userlogins")
+@RequestMapping("/api/v1/userlogins")
 public class UserLoginController {
 
     private final UserLoginService service;
