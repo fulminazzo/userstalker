@@ -7,10 +7,10 @@ import it.fulminazzo.userstalker.repository.UserLoginRepository;
 import it.fulminazzo.userstalker.service.UserLoginService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -30,7 +30,11 @@ class UserLoginServiceImpl implements UserLoginService {
 
     @Override
     public List<UserLoginDto> getNewestUserLogins(Integer count) {
-        return List.of();
+        List<UserLoginDto> logins = repository.findAll(Sort.by(Sort.Order.desc("loginDate"))).stream()
+                .map(mapper::entityToDto)
+                .toList();
+        if (count > 0) logins = logins.subList(0, Math.min(count, logins.size()));
+        return logins;
     }
 
     @Override
@@ -40,7 +44,7 @@ class UserLoginServiceImpl implements UserLoginService {
 
     @Override
     public List<UserLoginDto> getUserLoginsFromUsername(String username) {
-        return repository.findAllByUsername(username).stream().map(mapper::entityToDto).collect(Collectors.toList());
+        return repository.findAllByUsername(username).stream().map(mapper::entityToDto).toList();
     }
 
 }
