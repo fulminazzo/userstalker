@@ -7,7 +7,8 @@ import spock.lang.Specification
 class UserStalkerApplicationTests extends Specification {
 
     def 'test context loads'() {
-
+        expect:
+        true
     }
 
 }
