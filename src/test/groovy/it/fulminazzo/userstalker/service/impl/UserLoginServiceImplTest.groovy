@@ -1,6 +1,7 @@
 package it.fulminazzo.userstalker.service.impl
 
 import it.fulminazzo.userstalker.domain.entity.UserLogin
+import it.fulminazzo.userstalker.exception.HttpRequestException
 import it.fulminazzo.userstalker.mapper.UserLoginMapper
 import it.fulminazzo.userstalker.repository.UserLoginRepository
 import org.mapstruct.factory.Mappers
@@ -49,6 +50,16 @@ class UserLoginServiceImplTest extends Specification {
         0     || [SECOND_ENTITY, FIRST_ENTITY]
         1     || [SECOND_ENTITY]
         2     || [SECOND_ENTITY, FIRST_ENTITY]
+    }
+
+    def 'test getNewestUserLogins with negative size throws'() {
+        when:
+        service.getNewestUserLogins(-1)
+
+        then:
+        def e = thrown(HttpRequestException)
+        e.status == HttpRequestException.invalidSizeGreaterThan0().status
+        e.message == HttpRequestException.invalidSizeGreaterThan0().message
     }
 
     def 'test getUsernames returns usernames of entities'() {
