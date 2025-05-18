@@ -16,8 +16,7 @@ import java.util.UUID;
 public interface UserLoginRepository extends JpaRepository<UserLogin, UUID> {
 
     /**
-     * Returns an ordered list containing the number of logins a user
-     * issued to the server.
+     * Returns an ordered list containing the number of logins a user issued to the server.
      *
      * @return the list
      */
@@ -26,6 +25,19 @@ public interface UserLoginRepository extends JpaRepository<UserLogin, UUID> {
             "GROUP BY u.username " +
             "ORDER BY loginCount DESC")
     List<UserLoginCountDto> findTopUserLogins();
+
+    /**
+     * Returns an ordered list containing the number of logins a user issued to the server during the current month.
+     *
+     * @return the list
+     */
+    @Query("SELECT DISTINCT NEW it.fulminazzo.userstalker.domain.dto.UserLoginCountDto(u.username, count(*) as loginCount) " +
+            "FROM user_logins as u " +
+            "WHERE YEAR(u.loginDate) = YEAR(CURRENT_DATE) " +
+            "AND MONTH(u.loginDate) = MONTH(CURRENT_DATE) " +
+            "GROUP BY u.username " +
+            "ORDER BY loginCount DESC")
+    List<UserLoginCountDto> findTopMonthlyUserLogins();
 
     /**
      * Returns a distinct list containing all the usernames of the {@link UserLogin}s.
