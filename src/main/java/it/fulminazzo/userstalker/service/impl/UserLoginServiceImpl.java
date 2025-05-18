@@ -1,9 +1,11 @@
 package it.fulminazzo.userstalker.service.impl;
 
 import it.fulminazzo.userstalker.domain.dto.UserLoginDto;
+import it.fulminazzo.userstalker.domain.entity.UserLogin;
 import it.fulminazzo.userstalker.mapper.UserLoginMapper;
 import it.fulminazzo.userstalker.repository.UserLoginRepository;
 import it.fulminazzo.userstalker.service.UserLoginService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,9 +19,12 @@ class UserLoginServiceImpl implements UserLoginService {
 
     private final UserLoginMapper mapper;
 
+    @Transactional
     @Override
     public UserLoginDto addNewUserLogin(UserLoginDto userLoginDto) {
-        return null;
+        UserLogin userLogin = mapper.dtoToEntity(userLoginDto);
+        userLogin = repository.save(userLogin);
+        return mapper.entityToDto(userLogin);
     }
 
     @Override
