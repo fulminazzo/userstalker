@@ -36,4 +36,10 @@ class UserLoginUtils {
             .loginDate(LocalDateTime.of(2025, 5, 19, 00, 35))
             .build()
 
+    static final UserLogin FIRST_USER3 = UserLogin.builder()
+            .username('steve')
+            .ip('00.111.000.11')
+            .loginDate(LocalDateTime.of(2025, 6, 1, 12, 35))
+            .build()
+
 }
