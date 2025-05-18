@@ -52,6 +52,21 @@ class UserLoginServiceImplIntegrationTest extends Specification {
         entity.loginDate == userLoginDto.loginDate
     }
 
+    def 'test getNewestUserLogins returns ordered list with size #size'() {
+        when:
+        def logins = service.getNewestUserLogins(size)
+
+        then:
+        logins == expected.collect { mapper.entityToDto(it) }
+
+        where:
+        size || expected
+        0    || [FIRST_USER3, THIRD_USER1, SECOND_USER2, SECOND_USER1, FIRST_USER2, FIRST_USER1]
+        1    || [FIRST_USER3]
+        2    || [FIRST_USER3, THIRD_USER1]
+        3    || [FIRST_USER3, THIRD_USER1, SECOND_USER2]
+    }
+
     def 'test getUsernames returns all distinct usernames'() {
         when:
         def usernames = service.getUsernames()
