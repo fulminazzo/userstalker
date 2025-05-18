@@ -29,7 +29,7 @@ class UserLoginServiceImpl implements UserLoginService {
     }
 
     @Override
-    public List<UserLoginDto> getNewestUserLogins(Integer count) {
+    public List<UserLoginDto> getNewestUserLogins(int count) {
         List<UserLoginDto> logins = repository.findAll(Sort.by(Sort.Order.desc("loginDate"))).stream()
                 .map(mapper::entityToDto)
                 .toList();

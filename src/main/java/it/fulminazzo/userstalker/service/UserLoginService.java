@@ -29,7 +29,7 @@ public interface UserLoginService {
      * @param count if not 0, the list will be limited to the specified count
      * @return the list of user logins
      */
-    List<UserLoginDto> getNewestUserLogins(Integer count);
+    List<UserLoginDto> getNewestUserLogins(int count);
 
     /**
      * Gets all the usernames that have accessed the service.
