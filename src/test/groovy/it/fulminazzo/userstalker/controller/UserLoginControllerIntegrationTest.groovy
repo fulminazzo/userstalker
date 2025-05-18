@@ -1,13 +1,22 @@
 package it.fulminazzo.userstalker.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import it.fulminazzo.userstalker.MockMvcUtils
+import it.fulminazzo.userstalker.domain.dto.UserLoginDto
 import it.fulminazzo.userstalker.repository.UserLoginRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.http.MediaType
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import spock.lang.Specification
+
+import java.time.LocalDateTime
 
 import static it.fulminazzo.userstalker.service.impl.UserLoginUtils.*
 
@@ -22,7 +31,7 @@ class UserLoginControllerIntegrationTest extends Specification {
     @Autowired
     private MockMvc mockMvc
 
-    private ObjectMapper objectMapper
+    private ObjectMapper jsonMapper
 
     @Autowired
     private UserLoginController controller
@@ -30,29 +39,32 @@ class UserLoginControllerIntegrationTest extends Specification {
     void setup() {
         setupRepository(repository)
 
-        objectMapper = new ObjectMapper()
+        jsonMapper = new ObjectMapper()
+        jsonMapper.registerModule(new JavaTimeModule())
+        jsonMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
     }
 
-    def 'test that addNewUserLogin adds user'() {
-//        given:
-//        def userLoginDto = UserLoginDto.builder()
-//                .username('fulminazzo')
-//                .ip('99.888.777.66')
-//                .loginDate(LocalDateTime.of(2025, 5, 18, 19, 00, 25))
-//                .build()
-//
-//        when:
-//        def returnedDto = service.addNewUserLogin(userLoginDto)
-//        def entity = repository.findAll().find { it.ip == userLoginDto.ip }
-//
-//        then:
-//        returnedDto.username == userLoginDto.username
-//        returnedDto.ip == userLoginDto.ip
-//        returnedDto.loginDate == userLoginDto.loginDate
-//        entity != null
-//        entity.username == userLoginDto.username
-//        entity.ip == userLoginDto.ip
-//        entity.loginDate == userLoginDto.loginDate
+    def 'test postUserLogin returns created on valid data'() {
+        given:
+        def userLoginDto = UserLoginDto.builder()
+                .username('fulminazzo')
+                .ip('99.888.777.66')
+                .loginDate(LocalDateTime.of(2025, 5, 18, 19, 00, 25))
+                .build()
+        def json = jsonMapper.writeValueAsString(userLoginDto)
+
+        when:
+        def response = mockMvc.perform(
+                MockMvcUtils.authenticate(MockMvcRequestBuilders.post('/v1/api/userlogins')
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+        )
+
+        then:
+        response.andExpectAll(
+                MockMvcResultMatchers.status().isCreated(),
+                MockMvcResultMatchers.content().json(json)
+        )
     }
 
     def 'test getTopUserLogins returns ordered list with size #size'() {
