@@ -24,6 +24,7 @@ class UserLoginServiceImplIntegrationTest extends Specification {
 
     void setup() {
         service = new UserLoginServiceImpl(repository, mapper)
+        setupRepository()
     }
 
     def 'test that addNewUserLogin adds user'() {
@@ -46,6 +47,14 @@ class UserLoginServiceImplIntegrationTest extends Specification {
         entity.username == userLoginDto.username
         entity.ip == userLoginDto.ip
         entity.loginDate == userLoginDto.loginDate
+    }
+
+    private void setupRepository() {
+        repository.save(UserLoginUtils.FIRST_USER1)
+        repository.save(UserLoginUtils.SECOND_USER1)
+        repository.save(UserLoginUtils.THIRD_USER1)
+        repository.save(UserLoginUtils.FIRST_USER2)
+        repository.save(UserLoginUtils.SECOND_USER2)
     }
 
 }
