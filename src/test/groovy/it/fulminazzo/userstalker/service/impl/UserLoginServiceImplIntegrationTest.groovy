@@ -81,6 +81,32 @@ class UserLoginServiceImplIntegrationTest extends Specification {
         ]
     }
 
+    def 'test getTopMonthlyUserLogins returns ordered list with size #size'() {
+        when:
+        def logins = service.getTopMonthlyUserLogins(size)
+
+        then:
+        logins == expected
+
+        where:
+        size || expected
+        0    || [
+                new UserLoginCountDto(FIRST_USER1.username, 2),
+                new UserLoginCountDto(FIRST_USER2.username, 1)
+        ]
+        1    || [
+                new UserLoginCountDto(FIRST_USER1.username, 2)
+        ]
+        2    || [
+                new UserLoginCountDto(FIRST_USER1.username, 2),
+                new UserLoginCountDto(FIRST_USER2.username, 1)
+        ]
+        3    || [
+                new UserLoginCountDto(FIRST_USER1.username, 2),
+                new UserLoginCountDto(FIRST_USER2.username, 1)
+        ]
+    }
+
     def 'test getNewestUserLogins returns ordered list with size #size'() {
         when:
         def logins = service.getNewestUserLogins(size)
