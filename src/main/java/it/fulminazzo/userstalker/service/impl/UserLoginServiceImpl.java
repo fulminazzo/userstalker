@@ -12,6 +12,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * An implementation of {@link UserLoginService}.
+ */
 @RequiredArgsConstructor
 @Service
 class UserLoginServiceImpl implements UserLoginService {
