@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -39,7 +40,7 @@ class UserLoginServiceImpl implements UserLoginService {
 
     @Override
     public List<UserLoginDto> getUserLoginsFromUsername(String username) {
-        return List.of();
+        return repository.findAllByUsername(username).stream().map(mapper::entityToDto).collect(Collectors.toList());
     }
 
 }
