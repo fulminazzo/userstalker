@@ -63,6 +63,30 @@ class UserLoginServiceImplTest extends Specification {
         e.message == HttpRequestException.invalidSizeGreaterThan0().message
     }
 
+    def 'test getTopMonthlyUserLogins returns list with size #count'() {
+        when:
+        def logins = service.getTopMonthlyUserLogins(count)
+
+        then:
+        logins == expected
+
+        where:
+        count || expected
+        0     || [new UserLoginCountDto(FIRST_ENTITY.username, 2), new UserLoginCountDto(SECOND_ENTITY.username, 1)]
+        1     || [new UserLoginCountDto(FIRST_ENTITY.username, 2)]
+        2     || [new UserLoginCountDto(FIRST_ENTITY.username, 2), new UserLoginCountDto(SECOND_ENTITY.username, 1)]
+    }
+
+    def 'test getTopMonthlyUserLogins with negative size throws'() {
+        when:
+        service.getTopMonthlyUserLogins(-1)
+
+        then:
+        def e = thrown(HttpRequestException)
+        e.status == HttpRequestException.invalidSizeGreaterThan0().status
+        e.message == HttpRequestException.invalidSizeGreaterThan0().message
+    }
+
     def 'test getNewestUserLogins returns list with size #count'() {
         when:
         def logins = service.getNewestUserLogins(count)
@@ -109,11 +133,13 @@ class UserLoginServiceImplTest extends Specification {
     }
 
     private UserLoginRepository setupRepository() {
-        def repository = Mock(UserLoginRepository)
-        repository.findTopUserLogins() >> [
+        def userLogins = [
                 new UserLoginCountDto(FIRST_ENTITY.username, 2),
                 new UserLoginCountDto(SECOND_ENTITY.username, 1)
         ]
+        def repository = Mock(UserLoginRepository)
+        repository.findTopUserLogins() >> userLogins
+        repository.findTopMonthlyUserLogins() >> userLogins
         repository.findAll(_ as Sort) >> [SECOND_ENTITY, FIRST_ENTITY]
         repository.findDistinctUsernames() >> [FIRST_ENTITY.username, SECOND_ENTITY.username]
         repository.findAllByUsername(_ as String) >> { args ->
