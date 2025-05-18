@@ -11,14 +11,14 @@ import java.time.LocalDateTime
 
 class UserLoginServiceImplTest extends Specification {
 
-    private final UserLogin firstEntity = UserLogin.builder()
+    private static final UserLogin FIRST_ENTITY = UserLogin.builder()
             .id(UUID.randomUUID())
             .username('fulminazzo')
             .ip('11.222.333.44')
             .loginDate(LocalDateTime.of(2025, 5, 18, 17, 30))
             .build()
 
-    private final UserLogin secondEntity = UserLogin.builder()
+    private static final UserLogin SECOND_ENTITY = UserLogin.builder()
             .id(UUID.randomUUID())
             .username('alex')
             .ip('12.223.334.45')
@@ -42,7 +42,7 @@ class UserLoginServiceImplTest extends Specification {
         def usernames = service.getUsernames()
 
         then:
-        usernames == [firstEntity.username, secondEntity.username]
+        usernames == [FIRST_ENTITY.username, SECOND_ENTITY.username]
     }
 
     def 'test getUserLoginsFromUsername returns only #username\'s logins'() {
@@ -54,18 +54,18 @@ class UserLoginServiceImplTest extends Specification {
 
         where:
         username              || expected
-        firstEntity.username  || [firstEntity]
-        secondEntity.username || [secondEntity]
+        FIRST_ENTITY.username || [FIRST_ENTITY]
+        SECOND_ENTITY.username || [SECOND_ENTITY]
     }
 
     private UserLoginRepository setupRepository() {
         def repository = Mock(UserLoginRepository)
-        repository.findAll(_ as Sort) >> [secondEntity, firstEntity]
-        repository.findDistinctUsernames() >> [firstEntity.username, secondEntity.username]
+        repository.findAll(_ as Sort) >> [SECOND_ENTITY, FIRST_ENTITY]
+        repository.findDistinctUsernames() >> [FIRST_ENTITY.username, SECOND_ENTITY.username]
         repository.findAllByUsername(_ as String) >> { args ->
             def username = args[0]
-            if (username == firstEntity.username) return [firstEntity]
-            else if (username == secondEntity.username) return [secondEntity]
+            if (username == FIRST_ENTITY.username) return [FIRST_ENTITY]
+            else if (username == SECOND_ENTITY.username) return [SECOND_ENTITY]
             else return []
         }
         return repository
