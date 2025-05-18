@@ -15,6 +15,18 @@ import java.util.UUID;
 public interface UserLoginRepository extends JpaRepository<UserLogin, UUID> {
 
     /**
+     * Returns an ordered list containing the number of logins a user
+     * issued to the server.
+     *
+     * @return the list
+     */
+    @Query("SELECT DISTINCT u.username, count(*) as loginCount " +
+            "FROM user_logins as u " +
+            "GROUP BY u.username " +
+            "ORDER BY loginCount DESC")
+    List<Object[]> findTopUserLogins();
+
+    /**
      * Returns a distinct list containing all the usernames of the {@link UserLogin}s.
      *
      * @return the list
