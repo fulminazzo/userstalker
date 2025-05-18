@@ -139,6 +139,20 @@ class UserLoginServiceImplIntegrationTest extends Specification {
         FIRST_USER3.username in usernames
     }
 
+    def 'test getUserLoginsFromUsername of username #username returns expected list'() {
+        when:
+        def logins = service.getUserLoginsFromUsername(username)
+
+        then:
+        logins.containsAll(expected.collect { mapper.entityToDto(it) })
+
+        where:
+        username             || expected
+        FIRST_USER1.username || [FIRST_USER1, SECOND_USER1, THIRD_USER1]
+        FIRST_USER2.username || [FIRST_USER2, SECOND_USER2]
+        FIRST_USER3.username || [FIRST_USER3]
+    }
+
     private void setupRepository() {
         repository.saveAll(UserLoginUtils.properties.values()
                 .findAll { it instanceof UserLogin }
