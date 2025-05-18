@@ -1,6 +1,7 @@
 package it.fulminazzo.userstalker.service.impl
 
 import it.fulminazzo.userstalker.domain.dto.UserLoginCountDto
+import it.fulminazzo.userstalker.domain.dto.UserLoginDto
 import it.fulminazzo.userstalker.domain.entity.UserLogin
 import it.fulminazzo.userstalker.exception.HttpRequestException
 import it.fulminazzo.userstalker.mapper.UserLoginMapper
@@ -37,6 +38,21 @@ class UserLoginServiceImplTest extends Specification {
         mapper = Mappers.getMapper(UserLoginMapper)
 
         service = new UserLoginServiceImpl(repository, mapper)
+    }
+
+    def 'test that addNewUserLogin calls repository#save'() {
+        given:
+        def dto = UserLoginDto.builder()
+                .username('fulminazzo')
+                .ip('11.222.333.44')
+                .loginDate(LocalDateTime.of(2025, 5, 18, 17, 25))
+                .build()
+
+        when:
+        service.addNewUserLogin(dto)
+
+        then:
+        1 * repository.save(_)
     }
 
     def 'test getTopUserLogins returns list with size #count'() {
