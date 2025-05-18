@@ -49,6 +49,14 @@ class UserLoginServiceImplIntegrationTest extends Specification {
         entity.loginDate == userLoginDto.loginDate
     }
 
+    def 'test getUsernames returns all distinct usernames'() {
+        when:
+        def usernames = service.getUsernames()
+
+        then:
+        usernames == [UserLoginUtils.FIRST_USER2.username, UserLoginUtils.FIRST_USER1.username]
+    }
+
     private void setupRepository() {
         repository.save(UserLoginUtils.FIRST_USER1)
         repository.save(UserLoginUtils.SECOND_USER1)
