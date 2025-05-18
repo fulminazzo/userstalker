@@ -37,6 +37,14 @@ class UserLoginServiceImplTest extends Specification {
         service = new UserLoginServiceImpl(repository, mapper)
     }
 
+    def 'test getUsernames returns usernames of entities'() {
+        when:
+        def usernames = service.getUsernames()
+
+        then:
+        usernames == [firstEntity.username, secondEntity.username]
+    }
+
     private UserLoginRepository setupRepository() {
         def repository = Mock(UserLoginRepository)
         repository.findAll(_ as Sort) >> [secondEntity, firstEntity]
