@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import it.fulminazzo.userstalker.MockMvcUtils
 import it.fulminazzo.userstalker.domain.dto.UserLoginDto
+import it.fulminazzo.userstalker.mapper.UserLoginMapper
 import it.fulminazzo.userstalker.repository.UserLoginRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -29,6 +30,9 @@ class UserLoginControllerIntegrationTest extends Specification {
 
     @Autowired
     private UserLoginRepository repository
+
+    @Autowired
+    private UserLoginMapper userLoginMapper
 
     @Autowired
     private MockMvc mockMvc
@@ -186,17 +190,27 @@ class UserLoginControllerIntegrationTest extends Specification {
     }
 
     def 'test getUserLoginsFromUsername of username #username returns expected list'() {
-//        when:
-//        def logins = service.getUserLoginsFromUsername(username)
-//
-//        then:
-//        logins.containsAll(expected.collect { mapper.entityToDto(it) })
-//
-//        where:
-//        username             || expected
-//        FIRST_USER1.username || [FIRST_USER1, SECOND_USER1, THIRD_USER1]
-//        FIRST_USER2.username || [FIRST_USER2, SECOND_USER2]
-//        FIRST_USER3.username || [FIRST_USER3]
+        given:
+        def expectedJson = jsonMapper.writeValueAsString(expected
+                .collect { userLoginMapper.entityToDto(it) }
+        )
+
+        when:
+        def response = mockMvc.perform(
+                MockMvcUtils.authenticate(MockMvcRequestBuilders.get("/api/v1/userlogins/${username}"))
+        )
+
+        then:
+        response.andExpectAll(
+                MockMvcResultMatchers.status().isOk(),
+                MockMvcResultMatchers.content().json(expectedJson)
+        )
+
+        where:
+        username             || expected
+        FIRST_USER1.username || [FIRST_USER1, SECOND_USER1, THIRD_USER1]
+        FIRST_USER2.username || [FIRST_USER2, SECOND_USER2]
+        FIRST_USER3.username || [FIRST_USER3]
     }
 
     private static UserLoginDto createUserLogin(Consumer<UserLoginDto> function) {
