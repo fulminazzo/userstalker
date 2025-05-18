@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import it.fulminazzo.userstalker.MockMvcUtils
+import it.fulminazzo.userstalker.domain.dto.UserLoginCountDto
 import it.fulminazzo.userstalker.domain.dto.UserLoginDto
 import it.fulminazzo.userstalker.mapper.UserLoginMapper
 import it.fulminazzo.userstalker.repository.UserLoginRepository
@@ -135,29 +136,41 @@ class UserLoginControllerIntegrationTest extends Specification {
     }
 
     def 'test getTopMonthlyUserLogins returns ordered list with size #size'() {
-//        when:
-//        def logins = service.getTopMonthlyUserLogins(size)
-//
-//        then:
-//        logins == expected
-//
-//        where:
-//        size || expected
-//        0    || [
-//                new UserLoginCountDto(FIRST_USER1.username, 2),
-//                new UserLoginCountDto(FIRST_USER2.username, 1)
-//        ]
-//        1    || [
-//                new UserLoginCountDto(FIRST_USER1.username, 2)
-//        ]
-//        2    || [
-//                new UserLoginCountDto(FIRST_USER1.username, 2),
-//                new UserLoginCountDto(FIRST_USER2.username, 1)
-//        ]
-//        3    || [
-//                new UserLoginCountDto(FIRST_USER1.username, 2),
-//                new UserLoginCountDto(FIRST_USER2.username, 1)
-//        ]
+        given:
+        def expectedJson = jsonMapper.writeValueAsString(expected)
+
+        and:
+        def url = "$ENDPOINT/month"
+        if (size > 0) url += "?count=${size}"
+
+        when:
+        def response = mockMvc.perform(
+                MockMvcUtils.authenticate(MockMvcRequestBuilders.get(url))
+        )
+
+        then:
+        response.andExpectAll(
+                MockMvcResultMatchers.status().isOk(),
+                MockMvcResultMatchers.content().json(expectedJson)
+        )
+
+        where:
+        size || expected
+        0    || [
+                new UserLoginCountDto(FIRST_USER1.username, 2),
+                new UserLoginCountDto(FIRST_USER2.username, 1)
+        ]
+        1    || [
+                new UserLoginCountDto(FIRST_USER1.username, 2)
+        ]
+        2    || [
+                new UserLoginCountDto(FIRST_USER1.username, 2),
+                new UserLoginCountDto(FIRST_USER2.username, 1)
+        ]
+        3    || [
+                new UserLoginCountDto(FIRST_USER1.username, 2),
+                new UserLoginCountDto(FIRST_USER2.username, 1)
+        ]
     }
 
     def 'test getNewestUserLogins returns ordered list with size #size'() {
