@@ -34,12 +34,11 @@ class UserLoginServiceImpl implements UserLoginService {
 
     @Override
     public List<UserLoginDto> getNewestUserLogins(int count) {
+        if (count < 0) throw HttpRequestException.invalidSizeGreaterThan0();
         List<UserLoginDto> logins = repository.findAll(Sort.by(Sort.Order.desc("loginDate"))).stream()
                 .map(mapper::entityToDto)
                 .toList();
         if (count > 0) logins = logins.subList(0, Math.min(count, logins.size()));
-        else if (count < 0)
-            throw HttpRequestException.invalidSizeGreaterThan0();
         return logins;
     }
 
