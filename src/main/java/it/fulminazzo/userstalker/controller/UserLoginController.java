@@ -41,7 +41,8 @@ public class UserLoginController {
      * @return the user logins
      */
     @GetMapping("/top")
-    public List<UserLoginCountDto> getTopUserLogins(@RequestParam int count) {
+    public List<UserLoginCountDto> getTopUserLogins(@RequestParam(required = false) Integer count) {
+        if (count == null) count = 0;
         return service.getTopUserLogins(count);
     }
 
@@ -52,7 +53,8 @@ public class UserLoginController {
      * @return the user logins
      */
     @GetMapping("/month")
-    public List<UserLoginCountDto> getMonthlyUserLogins(@RequestParam int count) {
+    public List<UserLoginCountDto> getMonthlyUserLogins(@RequestParam(required = false) Integer count) {
+        if (count == null) count = 0;
         return service.getTopMonthlyUserLogins(count);
     }
 
@@ -63,7 +65,8 @@ public class UserLoginController {
      * @return the newest user logins
      */
     @GetMapping("/newest")
-    public List<UserLoginDto> getNewestUserLogins(@RequestParam int count) {
+    public List<UserLoginDto> getNewestUserLogins(@RequestParam(required = false) Integer count) {
+        if (count == null) count = 0;
         return service.getNewestUserLogins(count);
     }
 
