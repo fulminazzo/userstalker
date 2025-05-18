@@ -2,7 +2,6 @@ package it.fulminazzo.userstalker.service.impl
 
 import it.fulminazzo.userstalker.domain.dto.UserLoginCountDto
 import it.fulminazzo.userstalker.domain.dto.UserLoginDto
-import it.fulminazzo.userstalker.domain.entity.UserLogin
 import it.fulminazzo.userstalker.exception.HttpRequestException
 import it.fulminazzo.userstalker.mapper.UserLoginMapper
 import it.fulminazzo.userstalker.repository.UserLoginRepository
@@ -13,20 +12,6 @@ import spock.lang.Specification
 import java.time.LocalDateTime
 
 class UserLoginServiceImplTest extends Specification {
-
-    private static final UserLogin FIRST_ENTITY = UserLogin.builder()
-            .id(UUID.randomUUID())
-            .username('fulminazzo')
-            .ip('11.222.333.44')
-            .loginDate(LocalDateTime.of(2025, 5, 18, 17, 30))
-            .build()
-
-    private static final UserLogin SECOND_ENTITY = UserLogin.builder()
-            .id(UUID.randomUUID())
-            .username('alex')
-            .ip('12.223.334.45')
-            .loginDate(LocalDateTime.of(2025, 5, 18, 17, 35))
-            .build()
 
     private UserLoginRepository repository
     private UserLoginMapper mapper
@@ -64,9 +49,11 @@ class UserLoginServiceImplTest extends Specification {
 
         where:
         count || expected
-        0     || [new UserLoginCountDto(FIRST_ENTITY.username, 2), new UserLoginCountDto(SECOND_ENTITY.username, 1)]
-        1     || [new UserLoginCountDto(FIRST_ENTITY.username, 2)]
-        2     || [new UserLoginCountDto(FIRST_ENTITY.username, 2), new UserLoginCountDto(SECOND_ENTITY.username, 1)]
+        0     || [new UserLoginCountDto(UserLoginUtils.FIRST_USER1.username, 2),
+                  new UserLoginCountDto(UserLoginUtils.FIRST_USER2.username, 1)]
+        1     || [new UserLoginCountDto(UserLoginUtils.FIRST_USER1.username, 2)]
+        2     || [new UserLoginCountDto(UserLoginUtils.FIRST_USER1.username, 2),
+                  new UserLoginCountDto(UserLoginUtils.FIRST_USER2.username, 1)]
     }
 
     def 'test getTopUserLogins with negative size throws'() {
@@ -88,9 +75,11 @@ class UserLoginServiceImplTest extends Specification {
 
         where:
         count || expected
-        0     || [new UserLoginCountDto(FIRST_ENTITY.username, 2), new UserLoginCountDto(SECOND_ENTITY.username, 1)]
-        1     || [new UserLoginCountDto(FIRST_ENTITY.username, 2)]
-        2     || [new UserLoginCountDto(FIRST_ENTITY.username, 2), new UserLoginCountDto(SECOND_ENTITY.username, 1)]
+        0     || [new UserLoginCountDto(UserLoginUtils.FIRST_USER1.username, 2),
+                  new UserLoginCountDto(UserLoginUtils.FIRST_USER2.username, 1)]
+        1     || [new UserLoginCountDto(UserLoginUtils.FIRST_USER1.username, 2)]
+        2     || [new UserLoginCountDto(UserLoginUtils.FIRST_USER1.username, 2),
+                  new UserLoginCountDto(UserLoginUtils.FIRST_USER2.username, 1)]
     }
 
     def 'test getTopMonthlyUserLogins with negative size throws'() {
@@ -112,9 +101,9 @@ class UserLoginServiceImplTest extends Specification {
 
         where:
         count || expected
-        0     || [SECOND_ENTITY, FIRST_ENTITY]
-        1     || [SECOND_ENTITY]
-        2     || [SECOND_ENTITY, FIRST_ENTITY]
+        0     || [UserLoginUtils.FIRST_USER2, UserLoginUtils.FIRST_USER1]
+        1     || [UserLoginUtils.FIRST_USER2]
+        2     || [UserLoginUtils.FIRST_USER2, UserLoginUtils.FIRST_USER1]
     }
 
     def 'test getNewestUserLogins with negative size throws'() {
@@ -132,7 +121,7 @@ class UserLoginServiceImplTest extends Specification {
         def usernames = service.getUsernames()
 
         then:
-        usernames == [FIRST_ENTITY.username, SECOND_ENTITY.username]
+        usernames == [UserLoginUtils.FIRST_USER1.username, UserLoginUtils.FIRST_USER2.username]
     }
 
     def 'test getUserLoginsFromUsername returns only #username\'s logins'() {
@@ -143,25 +132,26 @@ class UserLoginServiceImplTest extends Specification {
         logins == expected.collect { mapper.entityToDto(it) }
 
         where:
-        username               || expected
-        FIRST_ENTITY.username  || [FIRST_ENTITY]
-        SECOND_ENTITY.username || [SECOND_ENTITY]
+        username                              || expected
+        UserLoginUtils.FIRST_USER1.username || [UserLoginUtils.FIRST_USER1]
+        UserLoginUtils.FIRST_USER2.username || [UserLoginUtils.FIRST_USER2]
     }
 
     private UserLoginRepository setupRepository() {
         def userLogins = [
-                new UserLoginCountDto(FIRST_ENTITY.username, 2),
-                new UserLoginCountDto(SECOND_ENTITY.username, 1)
+                new UserLoginCountDto(UserLoginUtils.FIRST_USER1.username, 2),
+                new UserLoginCountDto(UserLoginUtils.FIRST_USER2.username, 1)
         ]
         def repository = Mock(UserLoginRepository)
         repository.findTopUserLogins() >> userLogins
         repository.findTopMonthlyUserLogins() >> userLogins
-        repository.findAll(_ as Sort) >> [SECOND_ENTITY, FIRST_ENTITY]
-        repository.findDistinctUsernames() >> [FIRST_ENTITY.username, SECOND_ENTITY.username]
+        repository.findAll(_ as Sort) >> [UserLoginUtils.FIRST_USER2, UserLoginUtils.FIRST_USER1]
+        repository.findDistinctUsernames() >> [UserLoginUtils.FIRST_USER1.username,
+                                               UserLoginUtils.FIRST_USER2.username]
         repository.findAllByUsername(_ as String) >> { args ->
             def username = args[0]
-            if (username == FIRST_ENTITY.username) return [FIRST_ENTITY]
-            else if (username == SECOND_ENTITY.username) return [SECOND_ENTITY]
+            if (username == UserLoginUtils.FIRST_USER1.username) return [UserLoginUtils.FIRST_USER1]
+            else if (username == UserLoginUtils.FIRST_USER2.username) return [UserLoginUtils.FIRST_USER2]
             else return []
         }
         return repository
