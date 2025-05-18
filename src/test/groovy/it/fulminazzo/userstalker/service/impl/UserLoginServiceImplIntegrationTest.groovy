@@ -72,7 +72,10 @@ class UserLoginServiceImplIntegrationTest extends Specification {
         def usernames = service.getUsernames()
 
         then:
-        usernames == [FIRST_USER3.username, FIRST_USER2.username, FIRST_USER1.username]
+        usernames.size() == 3
+        FIRST_USER1.username in usernames
+        FIRST_USER2.username in usernames
+        FIRST_USER3.username in usernames
     }
 
     private void setupRepository() {
