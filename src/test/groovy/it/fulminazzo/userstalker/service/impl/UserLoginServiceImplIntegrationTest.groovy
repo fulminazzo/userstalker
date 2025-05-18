@@ -1,5 +1,6 @@
 package it.fulminazzo.userstalker.service.impl
 
+import it.fulminazzo.userstalker.domain.dto.UserLoginCountDto
 import it.fulminazzo.userstalker.domain.dto.UserLoginDto
 import it.fulminazzo.userstalker.domain.entity.UserLogin
 import it.fulminazzo.userstalker.mapper.UserLoginMapper
@@ -50,6 +51,34 @@ class UserLoginServiceImplIntegrationTest extends Specification {
         entity.username == userLoginDto.username
         entity.ip == userLoginDto.ip
         entity.loginDate == userLoginDto.loginDate
+    }
+
+    def 'test getTopUserLogins returns ordered list with size #size'() {
+        when:
+        def logins = service.getTopUserLogins(size)
+
+        then:
+        logins == expected
+
+        where:
+        size || expected
+        0    || [
+                new UserLoginCountDto(FIRST_USER1.username, 3),
+                new UserLoginCountDto(FIRST_USER2.username, 2),
+                new UserLoginCountDto(FIRST_USER3.username, 1)
+        ]
+        1    || [
+                new UserLoginCountDto(FIRST_USER1.username, 3)
+        ]
+        2    || [
+                new UserLoginCountDto(FIRST_USER1.username, 3),
+                new UserLoginCountDto(FIRST_USER2.username, 2)
+        ]
+        3    || [
+                new UserLoginCountDto(FIRST_USER1.username, 3),
+                new UserLoginCountDto(FIRST_USER2.username, 2),
+                new UserLoginCountDto(FIRST_USER3.username, 1)
+        ]
     }
 
     def 'test getNewestUserLogins returns ordered list with size #size'() {
