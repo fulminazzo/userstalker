@@ -147,6 +147,20 @@ class UserLoginControllerIntegrationTest extends Specification {
         ]
     }
 
+    def 'test getTopUserLogins returns 400 with invalid size'() {
+        when:
+        def response = mockMvc.perform(
+                MockMvcUtils.authenticate(MockMvcRequestBuilders.get("$ENDPOINT/top?count=-1"))
+        )
+
+        then:
+        response.andExpectAll(
+                MockMvcResultMatchers.status().isBadRequest(),
+                MockMvcResultMatchers.jsonPath('status').value(HttpStatus.BAD_REQUEST.value()),
+                MockMvcResultMatchers.jsonPath('error').isString()
+        )
+    }
+
     def 'test getTopMonthlyUserLogins returns ordered list with size #size'() {
         given:
         def expectedJson = jsonMapper.writeValueAsString(expected)
