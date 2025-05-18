@@ -1,6 +1,6 @@
 package it.fulminazzo.userstalker.service.impl
 
-import it.fulminazzo.userstalker.domain.dto.UserLoginCount
+import it.fulminazzo.userstalker.domain.dto.UserLoginCountDto
 import it.fulminazzo.userstalker.domain.entity.UserLogin
 import it.fulminazzo.userstalker.exception.HttpRequestException
 import it.fulminazzo.userstalker.mapper.UserLoginMapper
@@ -48,9 +48,9 @@ class UserLoginServiceImplTest extends Specification {
 
         where:
         count || expected
-        0     || [new UserLoginCount(FIRST_ENTITY.username, 2), new UserLoginCount(SECOND_ENTITY.username, 1)]
-        1     || [new UserLoginCount(FIRST_ENTITY.username, 2)]
-        2     || [new UserLoginCount(FIRST_ENTITY.username, 2), new UserLoginCount(SECOND_ENTITY.username, 1)]
+        0     || [new UserLoginCountDto(FIRST_ENTITY.username, 2), new UserLoginCountDto(SECOND_ENTITY.username, 1)]
+        1     || [new UserLoginCountDto(FIRST_ENTITY.username, 2)]
+        2     || [new UserLoginCountDto(FIRST_ENTITY.username, 2), new UserLoginCountDto(SECOND_ENTITY.username, 1)]
     }
 
     def 'test getTopUserLogins with negative size throws'() {
@@ -111,8 +111,8 @@ class UserLoginServiceImplTest extends Specification {
     private UserLoginRepository setupRepository() {
         def repository = Mock(UserLoginRepository)
         repository.findTopUserLogins() >> [
-                new UserLoginCount(FIRST_ENTITY.username, 2),
-                new UserLoginCount(SECOND_ENTITY.username, 1)
+                new UserLoginCountDto(FIRST_ENTITY.username, 2),
+                new UserLoginCountDto(SECOND_ENTITY.username, 1)
         ]
         repository.findAll(_ as Sort) >> [SECOND_ENTITY, FIRST_ENTITY]
         repository.findDistinctUsernames() >> [FIRST_ENTITY.username, SECOND_ENTITY.username]

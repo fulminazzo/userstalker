@@ -1,6 +1,6 @@
 package it.fulminazzo.userstalker.service.impl;
 
-import it.fulminazzo.userstalker.domain.dto.UserLoginCount;
+import it.fulminazzo.userstalker.domain.dto.UserLoginCountDto;
 import it.fulminazzo.userstalker.domain.dto.UserLoginDto;
 import it.fulminazzo.userstalker.domain.entity.UserLogin;
 import it.fulminazzo.userstalker.exception.HttpRequestException;
@@ -35,7 +35,7 @@ class UserLoginServiceImpl implements UserLoginService {
     }
 
     @Override
-    public List<UserLoginCount> getTopUserLogins(int count) {
+    public List<UserLoginCountDto> getTopUserLogins(int count) {
         return getCountedList(count, repository::findTopUserLogins);
     }
 

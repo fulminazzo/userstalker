@@ -1,6 +1,6 @@
 package it.fulminazzo.userstalker.service;
 
-import it.fulminazzo.userstalker.domain.dto.UserLoginCount;
+import it.fulminazzo.userstalker.domain.dto.UserLoginCountDto;
 import it.fulminazzo.userstalker.domain.dto.UserLoginDto;
 
 import java.util.List;
@@ -24,7 +24,7 @@ public interface UserLoginService {
      * @param count if not 0, the list will be limited to the specified count
      * @return the list of user logins count
      */
-    List<UserLoginCount> getTopUserLogins(int count);
+    List<UserLoginCountDto> getTopUserLogins(int count);
 
     //TODO: not UserLoginDto, but {name, count}
 //    List<UserLoginDto> getTopMonthlyUserLogins(Integer count);
