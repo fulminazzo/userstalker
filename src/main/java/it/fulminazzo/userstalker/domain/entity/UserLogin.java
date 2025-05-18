@@ -4,9 +4,11 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.UUID;
 
+/**
+ * An entity that represents the users accesses to the service.
+ */
 @Getter
 @Setter
 @NoArgsConstructor

@@ -12,6 +12,9 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+/**
+ * The respective DTO for the entity {@link it.fulminazzo.userstalker.domain.entity.UserLogin}.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

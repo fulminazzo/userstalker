@@ -14,6 +14,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
+/**
+ * The security configuration
+ */
 @Configuration
 @EnableWebSecurity
 @AllArgsConstructor
@@ -21,6 +24,17 @@ public class SecurityConfig {
 
     private UserConfig userConfig;
 
+    /**
+     * Filters the http requests.
+     * If the requested endpoint is <code>/login</code>, <code>/logout</code>,
+     * <code>/css</code>, <code>/scripts</code> or <code>/images</code>,
+     * no authentication is required.
+     * Supports the basic authentication header.
+     *
+     * @param http the http
+     * @return the security filter chain
+     * @throws Exception the exception
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(auth -> auth
@@ -35,11 +49,22 @@ public class SecurityConfig {
         return http.build();
     }
 
+    /**
+     * Gets the chosen {@link PasswordEncoder}.
+     *
+     * @return the password encoder
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
+    /**
+     * Gets a {@link UserDetailsService} with the username and password
+     * specified from {@link UserConfig}.
+     *
+     * @return the user details service
+     */
     @Bean
     public UserDetailsService userDetailsService() {
         UserDetails user = User.builder()

@@ -6,6 +6,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 
+/**
+ * The repository associated with {@link UserLogin}.
+ */
 @Repository
 public interface UserLoginRepository extends JpaRepository<UserLogin, UUID> {
 
