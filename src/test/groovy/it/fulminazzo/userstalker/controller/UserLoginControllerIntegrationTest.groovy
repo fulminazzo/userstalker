@@ -243,6 +243,20 @@ class UserLoginControllerIntegrationTest extends Specification {
         7    || [FIRST_USER3, THIRD_USER1, SECOND_USER2, SECOND_USER1, FIRST_USER2, FIRST_USER1]
     }
 
+    def 'test getNewestUserLogins returns 400 with invalid size'() {
+        when:
+        def response = mockMvc.perform(
+                MockMvcUtils.authenticate(MockMvcRequestBuilders.get("$ENDPOINT/newest?count=-1"))
+        )
+
+        then:
+        response.andExpectAll(
+                MockMvcResultMatchers.status().isBadRequest(),
+                MockMvcResultMatchers.jsonPath('status').value(HttpStatus.BAD_REQUEST.value()),
+                MockMvcResultMatchers.jsonPath('error').isString()
+        )
+    }
+
     def 'test getUsernames returns all usernames'() {
         when:
         def response = mockMvc.perform(
