@@ -103,36 +103,48 @@ class UserLoginControllerIntegrationTest extends Specification {
     }
 
     def 'test getTopUserLogins returns ordered list with size #size'() {
-//        when:
-//        def logins = service.getTopUserLogins(size)
-//
-//        then:
-//        logins == expected
-//
-//        where:
-//        size || expected
-//        0    || [
-//                new UserLoginCountDto(FIRST_USER1.username, 3),
-//                new UserLoginCountDto(FIRST_USER2.username, 2),
-//                new UserLoginCountDto(FIRST_USER3.username, 1)
-//        ]
-//        1    || [
-//                new UserLoginCountDto(FIRST_USER1.username, 3)
-//        ]
-//        2    || [
-//                new UserLoginCountDto(FIRST_USER1.username, 3),
-//                new UserLoginCountDto(FIRST_USER2.username, 2)
-//        ]
-//        3    || [
-//                new UserLoginCountDto(FIRST_USER1.username, 3),
-//                new UserLoginCountDto(FIRST_USER2.username, 2),
-//                new UserLoginCountDto(FIRST_USER3.username, 1)
-//        ]
-//        4    || [
-//                new UserLoginCountDto(FIRST_USER1.username, 3),
-//                new UserLoginCountDto(FIRST_USER2.username, 2),
-//                new UserLoginCountDto(FIRST_USER3.username, 1)
-//        ]
+        given:
+        def expectedJson = jsonMapper.writeValueAsString(expected)
+
+        and:
+        def url = "$ENDPOINT/top"
+        if (size > 0) url += "?count=${size}"
+
+        when:
+        def response = mockMvc.perform(
+                MockMvcUtils.authenticate(MockMvcRequestBuilders.get(url))
+        )
+
+        then:
+        response.andExpectAll(
+                MockMvcResultMatchers.status().isOk(),
+                MockMvcResultMatchers.content().json(expectedJson)
+        )
+
+        where:
+        size || expected
+        0    || [
+                new UserLoginCountDto(FIRST_USER1.username, 3),
+                new UserLoginCountDto(FIRST_USER2.username, 2),
+                new UserLoginCountDto(FIRST_USER3.username, 1)
+        ]
+        1    || [
+                new UserLoginCountDto(FIRST_USER1.username, 3)
+        ]
+        2    || [
+                new UserLoginCountDto(FIRST_USER1.username, 3),
+                new UserLoginCountDto(FIRST_USER2.username, 2)
+        ]
+        3    || [
+                new UserLoginCountDto(FIRST_USER1.username, 3),
+                new UserLoginCountDto(FIRST_USER2.username, 2),
+                new UserLoginCountDto(FIRST_USER3.username, 1)
+        ]
+        4    || [
+                new UserLoginCountDto(FIRST_USER1.username, 3),
+                new UserLoginCountDto(FIRST_USER2.username, 2),
+                new UserLoginCountDto(FIRST_USER3.username, 1)
+        ]
     }
 
     def 'test getTopMonthlyUserLogins returns ordered list with size #size'() {
