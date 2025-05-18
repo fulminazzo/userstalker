@@ -10,6 +10,8 @@ import spock.lang.Specification
 
 import java.time.LocalDateTime
 
+import static it.fulminazzo.userstalker.service.impl.UserLoginUtils.*
+
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class UserLoginServiceImplIntegrationTest extends Specification {
@@ -54,15 +56,15 @@ class UserLoginServiceImplIntegrationTest extends Specification {
         def usernames = service.getUsernames()
 
         then:
-        usernames == [UserLoginUtils.FIRST_USER2.username, UserLoginUtils.FIRST_USER1.username]
+        usernames == [FIRST_USER2.username, FIRST_USER1.username]
     }
 
     private void setupRepository() {
-        repository.save(UserLoginUtils.FIRST_USER1)
-        repository.save(UserLoginUtils.SECOND_USER1)
-        repository.save(UserLoginUtils.THIRD_USER1)
-        repository.save(UserLoginUtils.FIRST_USER2)
-        repository.save(UserLoginUtils.SECOND_USER2)
+        repository.save(FIRST_USER1)
+        repository.save(SECOND_USER1)
+        repository.save(THIRD_USER1)
+        repository.save(FIRST_USER2)
+        repository.save(SECOND_USER2)
     }
 
 }

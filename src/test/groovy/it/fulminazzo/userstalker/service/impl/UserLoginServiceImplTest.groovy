@@ -11,6 +11,8 @@ import spock.lang.Specification
 
 import java.time.LocalDateTime
 
+import static it.fulminazzo.userstalker.service.impl.UserLoginUtils.*
+
 class UserLoginServiceImplTest extends Specification {
 
     private UserLoginRepository repository
@@ -49,11 +51,11 @@ class UserLoginServiceImplTest extends Specification {
 
         where:
         count || expected
-        0     || [new UserLoginCountDto(UserLoginUtils.FIRST_USER1.username, 2),
-                  new UserLoginCountDto(UserLoginUtils.FIRST_USER2.username, 1)]
-        1     || [new UserLoginCountDto(UserLoginUtils.FIRST_USER1.username, 2)]
-        2     || [new UserLoginCountDto(UserLoginUtils.FIRST_USER1.username, 2),
-                  new UserLoginCountDto(UserLoginUtils.FIRST_USER2.username, 1)]
+        0     || [new UserLoginCountDto(FIRST_USER1.username, 2),
+                  new UserLoginCountDto(FIRST_USER2.username, 1)]
+        1     || [new UserLoginCountDto(FIRST_USER1.username, 2)]
+        2     || [new UserLoginCountDto(FIRST_USER1.username, 2),
+                  new UserLoginCountDto(FIRST_USER2.username, 1)]
     }
 
     def 'test getTopUserLogins with negative size throws'() {
@@ -75,11 +77,11 @@ class UserLoginServiceImplTest extends Specification {
 
         where:
         count || expected
-        0     || [new UserLoginCountDto(UserLoginUtils.FIRST_USER1.username, 2),
-                  new UserLoginCountDto(UserLoginUtils.FIRST_USER2.username, 1)]
-        1     || [new UserLoginCountDto(UserLoginUtils.FIRST_USER1.username, 2)]
-        2     || [new UserLoginCountDto(UserLoginUtils.FIRST_USER1.username, 2),
-                  new UserLoginCountDto(UserLoginUtils.FIRST_USER2.username, 1)]
+        0     || [new UserLoginCountDto(FIRST_USER1.username, 2),
+                  new UserLoginCountDto(FIRST_USER2.username, 1)]
+        1     || [new UserLoginCountDto(FIRST_USER1.username, 2)]
+        2     || [new UserLoginCountDto(FIRST_USER1.username, 2),
+                  new UserLoginCountDto(FIRST_USER2.username, 1)]
     }
 
     def 'test getTopMonthlyUserLogins with negative size throws'() {
@@ -101,9 +103,9 @@ class UserLoginServiceImplTest extends Specification {
 
         where:
         count || expected
-        0     || [UserLoginUtils.FIRST_USER2, UserLoginUtils.FIRST_USER1]
-        1     || [UserLoginUtils.FIRST_USER2]
-        2     || [UserLoginUtils.FIRST_USER2, UserLoginUtils.FIRST_USER1]
+        0     || [FIRST_USER2, FIRST_USER1]
+        1     || [FIRST_USER2]
+        2     || [FIRST_USER2, FIRST_USER1]
     }
 
     def 'test getNewestUserLogins with negative size throws'() {
@@ -121,7 +123,7 @@ class UserLoginServiceImplTest extends Specification {
         def usernames = service.getUsernames()
 
         then:
-        usernames == [UserLoginUtils.FIRST_USER1.username, UserLoginUtils.FIRST_USER2.username]
+        usernames == [FIRST_USER1.username, FIRST_USER2.username]
     }
 
     def 'test getUserLoginsFromUsername returns only #username\'s logins'() {
@@ -133,25 +135,25 @@ class UserLoginServiceImplTest extends Specification {
 
         where:
         username                              || expected
-        UserLoginUtils.FIRST_USER1.username || [UserLoginUtils.FIRST_USER1]
-        UserLoginUtils.FIRST_USER2.username || [UserLoginUtils.FIRST_USER2]
+        FIRST_USER1.username || [FIRST_USER1]
+        FIRST_USER2.username || [FIRST_USER2]
     }
 
     private UserLoginRepository setupRepository() {
         def userLogins = [
-                new UserLoginCountDto(UserLoginUtils.FIRST_USER1.username, 2),
-                new UserLoginCountDto(UserLoginUtils.FIRST_USER2.username, 1)
+                new UserLoginCountDto(FIRST_USER1.username, 2),
+                new UserLoginCountDto(FIRST_USER2.username, 1)
         ]
         def repository = Mock(UserLoginRepository)
         repository.findTopUserLogins() >> userLogins
         repository.findTopMonthlyUserLogins() >> userLogins
-        repository.findAll(_ as Sort) >> [UserLoginUtils.FIRST_USER2, UserLoginUtils.FIRST_USER1]
-        repository.findDistinctUsernames() >> [UserLoginUtils.FIRST_USER1.username,
-                                               UserLoginUtils.FIRST_USER2.username]
+        repository.findAll(_ as Sort) >> [FIRST_USER2, FIRST_USER1]
+        repository.findDistinctUsernames() >> [FIRST_USER1.username,
+                                               FIRST_USER2.username]
         repository.findAllByUsername(_ as String) >> { args ->
             def username = args[0]
-            if (username == UserLoginUtils.FIRST_USER1.username) return [UserLoginUtils.FIRST_USER1]
-            else if (username == UserLoginUtils.FIRST_USER2.username) return [UserLoginUtils.FIRST_USER2]
+            if (username == FIRST_USER1.username) return [FIRST_USER1]
+            else if (username == FIRST_USER2.username) return [FIRST_USER2]
             else return []
         }
         return repository
