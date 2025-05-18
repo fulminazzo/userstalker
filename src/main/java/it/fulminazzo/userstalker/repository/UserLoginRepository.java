@@ -1,5 +1,6 @@
 package it.fulminazzo.userstalker.repository;
 
+import it.fulminazzo.userstalker.domain.dto.UserLoginCount;
 import it.fulminazzo.userstalker.domain.entity.UserLogin;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,6 +14,18 @@ import java.util.UUID;
  */
 @Repository
 public interface UserLoginRepository extends JpaRepository<UserLogin, UUID> {
+
+    /**
+     * Returns an ordered list containing the number of logins a user
+     * issued to the server.
+     *
+     * @return the list
+     */
+    @Query("SELECT DISTINCT NEW it.fulminazzo.userstalker.domain.dto.UserLoginCount(u.username, count(*) as loginCount) " +
+            "FROM user_logins as u " +
+            "GROUP BY u.username " +
+            "ORDER BY loginCount DESC")
+    List<UserLoginCount> findTopUserLogins();
 
     /**
      * Returns a distinct list containing all the usernames of the {@link UserLogin}s.
