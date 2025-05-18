@@ -1,6 +1,7 @@
 package it.fulminazzo.userstalker.service.impl
 
 import it.fulminazzo.userstalker.domain.entity.UserLogin
+import it.fulminazzo.userstalker.repository.UserLoginRepository
 
 import java.time.LocalDateTime
 
@@ -51,6 +52,12 @@ class UserLoginUtils {
             year--
         }
         return LocalDateTime.of(year, month, dayOfMonth, hour, minute)
+    }
+
+    static void setupRepository(UserLoginRepository repository) {
+        repository.saveAll(UserLoginUtils.properties.values()
+                .findAll { it instanceof UserLogin }
+                .each { it.id = null })
     }
 
 }

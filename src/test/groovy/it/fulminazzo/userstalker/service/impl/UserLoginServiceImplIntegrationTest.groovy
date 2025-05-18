@@ -2,7 +2,6 @@ package it.fulminazzo.userstalker.service.impl
 
 import it.fulminazzo.userstalker.domain.dto.UserLoginCountDto
 import it.fulminazzo.userstalker.domain.dto.UserLoginDto
-import it.fulminazzo.userstalker.domain.entity.UserLogin
 import it.fulminazzo.userstalker.mapper.UserLoginMapper
 import it.fulminazzo.userstalker.repository.UserLoginRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -28,7 +27,7 @@ class UserLoginServiceImplIntegrationTest extends Specification {
 
     void setup() {
         service = new UserLoginServiceImpl(repository, mapper)
-        setupRepository()
+        setupRepository(repository)
     }
 
     def 'test that addNewUserLogin adds user'() {
@@ -151,12 +150,6 @@ class UserLoginServiceImplIntegrationTest extends Specification {
         FIRST_USER1.username || [FIRST_USER1, SECOND_USER1, THIRD_USER1]
         FIRST_USER2.username || [FIRST_USER2, SECOND_USER2]
         FIRST_USER3.username || [FIRST_USER3]
-    }
-
-    private void setupRepository() {
-        repository.saveAll(UserLoginUtils.properties.values()
-                .findAll { it instanceof UserLogin }
-                .each { it.id = null })
     }
 
 }
