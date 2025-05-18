@@ -40,6 +40,11 @@ class UserLoginServiceImpl implements UserLoginService {
     }
 
     @Override
+    public List<UserLoginCountDto> getTopMonthlyUserLogins(int count) {
+        return getCountedList(count, repository::findTopMonthlyUserLogins);
+    }
+
+    @Override
     public List<UserLoginDto> getNewestUserLogins(int count) {
         return getCountedList(count, () -> repository.findAll(Sort.by(Sort.Order.desc("loginDate"))).stream()
                 .map(mapper::entityToDto)

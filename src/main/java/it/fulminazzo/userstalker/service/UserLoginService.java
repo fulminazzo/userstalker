@@ -26,8 +26,13 @@ public interface UserLoginService {
      */
     List<UserLoginCountDto> getTopUserLogins(int count);
 
-    //TODO: not UserLoginDto, but {name, count}
-//    List<UserLoginDto> getTopMonthlyUserLogins(Integer count);
+    /**
+     * Gets a list containing the user logins of the current month sorted by number of logins.
+     *
+     * @param count if not 0, the list will be limited to the specified count
+     * @return the list of user logins count
+     */
+    List<UserLoginCountDto> getTopMonthlyUserLogins(int count);
 
     /**
      * Gets a list containing the user logins sorted by newest.
