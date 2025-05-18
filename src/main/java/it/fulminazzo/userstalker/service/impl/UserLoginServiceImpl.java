@@ -34,7 +34,7 @@ class UserLoginServiceImpl implements UserLoginService {
 
     @Override
     public List<String> getUsernames() {
-        return List.of();
+        return repository.findDistinctUsernames();
     }
 
     @Override
