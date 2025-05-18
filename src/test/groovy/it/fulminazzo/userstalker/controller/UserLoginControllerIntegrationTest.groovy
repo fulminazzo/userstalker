@@ -9,6 +9,7 @@ import it.fulminazzo.userstalker.repository.UserLoginRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.web.servlet.MockMvc
@@ -17,6 +18,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import spock.lang.Specification
 
 import java.time.LocalDateTime
+import java.util.function.Consumer
 
 import static it.fulminazzo.userstalker.service.impl.UserLoginUtils.*
 
@@ -46,11 +48,7 @@ class UserLoginControllerIntegrationTest extends Specification {
 
     def 'test postUserLogin returns created on valid data'() {
         given:
-        def userLoginDto = UserLoginDto.builder()
-                .username('fulminazzo')
-                .ip('99.888.777.66')
-                .loginDate(LocalDateTime.of(2025, 5, 18, 19, 00, 25))
-                .build()
+        def userLoginDto = createUserLogin(null)
         def json = jsonMapper.writeValueAsString(userLoginDto)
 
         when:
@@ -65,6 +63,36 @@ class UserLoginControllerIntegrationTest extends Specification {
                 MockMvcResultMatchers.status().isCreated(),
                 MockMvcResultMatchers.content().json(json)
         )
+    }
+
+    def 'test postUserLogin returns 400 on invalid data #data'() {
+        given:
+        def json = jsonMapper.writeValueAsString(data)
+
+        when:
+        def response = mockMvc.perform(
+                MockMvcUtils.authenticate(MockMvcRequestBuilders.post('/api/v1/userlogins')
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+        )
+
+        then:
+        response.andExpectAll(
+                MockMvcResultMatchers.status().isBadRequest(),
+                MockMvcResultMatchers.jsonPath('status').value(HttpStatus.BAD_REQUEST.value()),
+                MockMvcResultMatchers.jsonPath('error').isString()
+        )
+
+        where:
+        data << [
+                createUserLogin(u -> u.username = null),
+                createUserLogin(u -> u.username = 'aa'),
+                createUserLogin(u -> u.username = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'),
+                createUserLogin(u -> u.ip = null),
+                createUserLogin(u -> u.ip = ''),
+                createUserLogin(u -> u.loginDate = null),
+                createUserLogin(u -> u.loginDate = LocalDateTime.of(3010, 2, 2, 1, 1)),
+        ]
     }
 
     def 'test getTopUserLogins returns ordered list with size #size'() {
@@ -165,6 +193,16 @@ class UserLoginControllerIntegrationTest extends Specification {
 //        FIRST_USER1.username || [FIRST_USER1, SECOND_USER1, THIRD_USER1]
 //        FIRST_USER2.username || [FIRST_USER2, SECOND_USER2]
 //        FIRST_USER3.username || [FIRST_USER3]
+    }
+
+    private static UserLoginDto createUserLogin(Consumer<UserLoginDto> function) {
+        def dto = UserLoginDto.builder()
+                .username('fulminazzo')
+                .ip('99.888.777.66')
+                .loginDate(LocalDateTime.of(2025, 5, 18, 19, 00, 25))
+                .build()
+        if (function != null) function.accept(dto)
+        return dto
     }
 
 }
