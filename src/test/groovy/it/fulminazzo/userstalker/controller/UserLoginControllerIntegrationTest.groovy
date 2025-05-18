@@ -170,15 +170,19 @@ class UserLoginControllerIntegrationTest extends Specification {
 //        7    || [FIRST_USER3, THIRD_USER1, SECOND_USER2, SECOND_USER1, FIRST_USER2, FIRST_USER1]
     }
 
-    def 'test getUsernames returns all distinct usernames'() {
-//        when:
-//        def usernames = service.getUsernames()
-//
-//        then:
-//        usernames.size() == 3
-//        FIRST_USER1.username in usernames
-//        FIRST_USER2.username in usernames
-//        FIRST_USER3.username in usernames
+    def 'test getUsernames returns all usernames'() {
+        when:
+        def response = mockMvc.perform(
+                MockMvcUtils.authenticate(MockMvcRequestBuilders.get('/api/v1/userlogins/usernames'))
+        )
+
+        then:
+        response.andExpectAll(
+                MockMvcResultMatchers.status().isOk(),
+                MockMvcResultMatchers.jsonPath('[0]').value(FIRST_USER2.username),
+                MockMvcResultMatchers.jsonPath('[1]').value(FIRST_USER1.username),
+                MockMvcResultMatchers.jsonPath('[2]').value(FIRST_USER3.username),
+        )
     }
 
     def 'test getUserLoginsFromUsername of username #username returns expected list'() {
