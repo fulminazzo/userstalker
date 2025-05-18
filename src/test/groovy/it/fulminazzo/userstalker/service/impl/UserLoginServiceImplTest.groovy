@@ -37,6 +37,20 @@ class UserLoginServiceImplTest extends Specification {
         service = new UserLoginServiceImpl(repository, mapper)
     }
 
+    def 'test getNewestUserLogins returns list with size #count'() {
+        when:
+        def logins = service.getNewestUserLogins(count)
+
+        then:
+        logins == expected.collect { mapper.entityToDto(it) }
+
+        where:
+        count || expected
+        0     || [SECOND_ENTITY, FIRST_ENTITY]
+        1     || [SECOND_ENTITY]
+        2     || [SECOND_ENTITY, FIRST_ENTITY]
+    }
+
     def 'test getUsernames returns usernames of entities'() {
         when:
         def usernames = service.getUsernames()
@@ -53,8 +67,8 @@ class UserLoginServiceImplTest extends Specification {
         logins == expected.collect { mapper.entityToDto(it) }
 
         where:
-        username              || expected
-        FIRST_ENTITY.username || [FIRST_ENTITY]
+        username               || expected
+        FIRST_ENTITY.username  || [FIRST_ENTITY]
         SECOND_ENTITY.username || [SECOND_ENTITY]
     }
 
