@@ -1,5 +1,6 @@
 package it.fulminazzo.userstalker.config
 
+import it.fulminazzo.userstalker.MockMvcUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
@@ -17,6 +18,18 @@ class SecurityConfigTest extends Specification {
 
     @Autowired
     private MockMvc mockMvc
+
+    def 'test that access to page with authentication is permitted'() {
+        when:
+        def response = mockMvc.perform(
+                MockMvcUtils.authenticate(MockMvcRequestBuilders.get('/index'))
+        )
+
+        then:
+        response.andExpectAll(
+                MockMvcResultMatchers.status().isNotFound()
+        )
+    }
 
     def 'test that access to page #page is permitted'() {
         when:
