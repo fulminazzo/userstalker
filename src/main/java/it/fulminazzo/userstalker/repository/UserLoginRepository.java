@@ -22,4 +22,12 @@ public interface UserLoginRepository extends JpaRepository<UserLogin, UUID> {
     @Query("SELECT DISTINCT u.username FROM user_logins as u")
     List<String> findDistinctUsernames();
 
+    /**
+     * Returns all the {@link UserLogin}s of the given username.
+     *
+     * @param username the username
+     * @return the list
+     */
+    List<UserLogin> findAllByUsername(String username);
+
 }
