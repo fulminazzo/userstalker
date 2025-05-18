@@ -27,6 +27,8 @@ import static it.fulminazzo.userstalker.service.impl.UserLoginUtils.*
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @AutoConfigureMockMvc
 class UserLoginControllerIntegrationTest extends Specification {
+    
+    private static final String ENDPOINT = '/api/v1/userlogins'
 
     @Autowired
     private UserLoginRepository repository
@@ -57,7 +59,7 @@ class UserLoginControllerIntegrationTest extends Specification {
 
         when:
         def response = mockMvc.perform(
-                MockMvcUtils.authenticate(MockMvcRequestBuilders.post('/api/v1/userlogins')
+                MockMvcUtils.authenticate(MockMvcRequestBuilders.post(ENDPOINT)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
         )
@@ -75,7 +77,7 @@ class UserLoginControllerIntegrationTest extends Specification {
 
         when:
         def response = mockMvc.perform(
-                MockMvcUtils.authenticate(MockMvcRequestBuilders.post('/api/v1/userlogins')
+                MockMvcUtils.authenticate(MockMvcRequestBuilders.post(ENDPOINT)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
         )
@@ -165,7 +167,7 @@ class UserLoginControllerIntegrationTest extends Specification {
         )
 
         and:
-        def url = '/api/v1/userlogins/newest'
+        def url = "$ENDPOINT/newest"
         if (size > 0) url += "?count=${size}"
 
         when:
@@ -191,7 +193,7 @@ class UserLoginControllerIntegrationTest extends Specification {
     def 'test getUsernames returns all usernames'() {
         when:
         def response = mockMvc.perform(
-                MockMvcUtils.authenticate(MockMvcRequestBuilders.get('/api/v1/userlogins/usernames'))
+                MockMvcUtils.authenticate(MockMvcRequestBuilders.get("$ENDPOINT/usernames"))
         )
 
         then:
@@ -211,7 +213,7 @@ class UserLoginControllerIntegrationTest extends Specification {
 
         when:
         def response = mockMvc.perform(
-                MockMvcUtils.authenticate(MockMvcRequestBuilders.get("/api/v1/userlogins/${username}"))
+                MockMvcUtils.authenticate(MockMvcRequestBuilders.get("$ENDPOINT/$username"))
         )
 
         then:
