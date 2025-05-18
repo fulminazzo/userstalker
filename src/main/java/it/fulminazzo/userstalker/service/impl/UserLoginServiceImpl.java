@@ -2,6 +2,7 @@ package it.fulminazzo.userstalker.service.impl;
 
 import it.fulminazzo.userstalker.domain.dto.UserLoginDto;
 import it.fulminazzo.userstalker.domain.entity.UserLogin;
+import it.fulminazzo.userstalker.exception.HttpRequestException;
 import it.fulminazzo.userstalker.mapper.UserLoginMapper;
 import it.fulminazzo.userstalker.repository.UserLoginRepository;
 import it.fulminazzo.userstalker.service.UserLoginService;
@@ -37,6 +38,8 @@ class UserLoginServiceImpl implements UserLoginService {
                 .map(mapper::entityToDto)
                 .toList();
         if (count > 0) logins = logins.subList(0, Math.min(count, logins.size()));
+        else if (count < 0)
+            throw HttpRequestException.invalidSizeGreaterThan0();
         return logins;
     }
 

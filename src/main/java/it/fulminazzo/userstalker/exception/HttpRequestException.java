@@ -23,4 +23,13 @@ public final class HttpRequestException extends RuntimeException {
         this.status = status;
     }
 
+    /**
+     * Returns a {@link HttpRequestException} with a message of invalid size.
+     *
+     * @return the http request exception
+     */
+    public static HttpRequestException invalidSizeGreaterThan0() {
+        return new HttpRequestException(HttpStatus.BAD_REQUEST, "Invalid size specified: required a number greater than 0");
+    }
+
 }
