@@ -35,7 +35,10 @@ class UserLoginServiceImpl implements UserLoginService {
 
     @Override
     public List<UserLoginCount> getTopUserLogins(int count) {
-        return List.of();
+        if (count < 0) throw HttpRequestException.invalidSizeGreaterThan0();
+        List<UserLoginCount> logins = repository.findTopUserLogins();
+        if (count > 0) logins = logins.subList(0, Math.min(count, logins.size()));
+        return logins;
     }
 
     @Override
