@@ -52,4 +52,13 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
           source: "build/libs/${{ github.event.repository.name }}.jar"
-          target: "http/"
+          target: "http/${{ github.event.repository.name }}.jar"
+
+      - name: Restart server process
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: "~/http/start.sh"
