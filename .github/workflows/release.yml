@@ -12,7 +12,7 @@ on:
       - "main"
 
 concurrency:
-  group: gradle-${{ github.ref }}
+  group: release
   cancel-in-progress: true
 
 permissions:
