@@ -1,0 +1,36 @@
+# Name of the action
+name: Automatic Release
+
+# Event to run on
+on:
+  workflow_run:
+    workflows: [ "Execute tests with Gradle" ]
+    types:
+      - completed
+    branches:
+      - "master"
+      - "main"
+
+concurrency:
+  group: gradle-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+# Jobs that will execute
+jobs:
+  release:
+    name: Setup Environment, Build JAR and Release Project
+    runs-on: ubuntu-latest
+    if: startsWith(github.event.workflow_run.head_commit.message, '!release') && github.event.workflow_run.conclusion == 'success'
+    steps:
+      - name: Automatic Release
+        uses: Fulminazzo/java-automatic-release@v3
+        with:
+          java-version: 17
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPOSITORY_NAME: ${{ github.event.repository.name }}
+          # Message specified in the commit
+          COMMIT_MESSAGE: ${{ github.event.workflow_run.head_commit.message }}
