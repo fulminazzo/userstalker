@@ -1,5 +1,5 @@
 # Name of the action
-name: Automatic Release
+name: Automatic Release on Remote Server
 
 # Event to run on
 on:
@@ -20,17 +20,43 @@ permissions:
 
 # Jobs that will execute
 jobs:
-  release:
-    name: Setup Environment, Build JAR and Release Project
+  build:
+    name: Setup Environment and Build JAR
+    if: github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
-    if: startsWith(github.event.workflow_run.head_commit.message, '!release') && github.event.workflow_run.conclusion == 'success'
+    permissions:
+      contents: read
+
     steps:
-      - name: Automatic Release
-        uses: Fulminazzo/java-automatic-release@v3
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
         with:
-          java-version: 17
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REPOSITORY_NAME: ${{ github.event.repository.name }}
-          # Message specified in the commit
-          COMMIT_MESSAGE: ${{ github.event.workflow_run.head_commit.message }}
+          java-version: '17'
+          distribution: 'temurin'
+
+      # Configure Gradle for optimal use in GitHub Actions, including caching of downloaded dependencies.
+      # See: https://github.com/gradle/actions/blob/main/setup-gradle/README.md
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
+
+      - name: Build with Gradle Wrapper
+        run: ./gradlew build
+
+  release:
+    name: Release JAR on remote server
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Copy JAR via SSH
+        uses: appleboy/scp-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          source: "build/libs/${{ github.event.repository.name }}.jar"
+          target: "http/"
