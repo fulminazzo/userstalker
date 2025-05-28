@@ -54,3 +54,10 @@ dependencies {
 test {
 	useJUnitPlatform()
 }
+
+bootJar {
+	archiveFileName = "${project.name}.jar"
+	manifest {
+		attributes ('Manifest-Version': "$rootProject.version")
+	}
+}
