@@ -21,7 +21,7 @@ public interface UserLoginRepository extends JpaRepository<UserLogin, UUID> {
      * @return the list
      */
     @Query("SELECT DISTINCT NEW it.fulminazzo.userstalker.domain.dto.UserLoginCountDto(u.username, count(*) as loginCount) " +
-            "FROM user_logins as u " +
+            "FROM UserLogin as u " +
             "GROUP BY u.username " +
             "ORDER BY loginCount DESC")
     List<UserLoginCountDto> findTopUserLogins();
@@ -32,7 +32,7 @@ public interface UserLoginRepository extends JpaRepository<UserLogin, UUID> {
      * @return the list
      */
     @Query("SELECT DISTINCT NEW it.fulminazzo.userstalker.domain.dto.UserLoginCountDto(u.username, count(*) as loginCount) " +
-            "FROM user_logins as u " +
+            "FROM UserLogin as u " +
             "WHERE YEAR(u.loginDate) = YEAR(CURRENT_DATE) " +
             "AND MONTH(u.loginDate) = MONTH(CURRENT_DATE) " +
             "GROUP BY u.username " +
@@ -44,7 +44,7 @@ public interface UserLoginRepository extends JpaRepository<UserLogin, UUID> {
      *
      * @return the list
      */
-    @Query("SELECT DISTINCT u.username FROM user_logins as u ORDER BY u.username")
+    @Query("SELECT DISTINCT u.username FROM UserLogin as u ORDER BY u.username")
     List<String> findDistinctUsernames();
 
     /**
