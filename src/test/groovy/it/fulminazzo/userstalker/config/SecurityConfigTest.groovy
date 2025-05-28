@@ -60,9 +60,12 @@ class SecurityConfigTest extends Specification {
 
         then:
         response.andExpectAll(
-                MockMvcResultMatchers.status().isFound(),
-                MockMvcResultMatchers.redirectedUrl('http://localhost/login')
+                MockMvcResultMatchers.status().isUnauthorized()
         )
+//        response.andExpectAll(
+//                MockMvcResultMatchers.status().isFound(),
+//                MockMvcResultMatchers.redirectedUrl('http://localhost/login')
+//        )
     }
 
 }

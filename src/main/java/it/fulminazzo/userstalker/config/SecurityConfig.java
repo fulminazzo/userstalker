@@ -40,11 +40,13 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login", "/logout", "/css/**", "/scripts/**", "/images/**").permitAll()
                         .anyRequest().authenticated()
-                ).formLogin(form -> form
+                )
+                //TODO: uncomment
+                /*.formLogin(form -> form
                         .loginPage("/login")
                         .defaultSuccessUrl("/", true)
                         .permitAll()
-                )
+                )*/
                 .httpBasic(Customizer.withDefaults())
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"));
         return http.build();
