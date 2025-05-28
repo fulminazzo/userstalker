@@ -44,6 +44,9 @@ jobs:
       - name: Build with Gradle Wrapper
         run: ./gradlew build
 
+      - name: Change directory to build/libs
+        run: cd build/libs
+
       - name: Copy JAR via SSH
         uses: appleboy/scp-action@v1
         with:
@@ -51,8 +54,8 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
-          source: "build/libs/${{ github.event.repository.name }}.jar"
-          target: "http/${{ github.event.repository.name }}.jar"
+          source: "${{ github.event.repository.name }}.jar"
+          target: "http/"
 
       - name: Restart server process
         uses: appleboy/ssh-action@master
